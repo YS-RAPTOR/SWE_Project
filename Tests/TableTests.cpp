@@ -1,9 +1,6 @@
-#include "Database\table.h"
-#include <string>
+#include "TableTests.h"
 
-#include <iostream>
-
-int main(){
+void TestBinaryConversion(){
 
     cout << "Testing Binary Conversion\n";
     
