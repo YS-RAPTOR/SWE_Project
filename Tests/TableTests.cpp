@@ -1,7 +1,6 @@
 #include "TableTests.h"
 
 void TestBinaryConversion(){
-
     cout << "Testing Binary Conversion\n";
     
     //Test Candidate Binary Conversion
@@ -23,24 +22,20 @@ void TestBinaryConversion(){
     cout << endl;
 
     //Test Voter Binary Conversion
-    cout << "Voter: ";
-
     unsigned long testVoterID = 123456789;
     string testVoterName = "Test Name";
     unsigned char testVoterAge = 32;
     string testVoterSuburb = "Test Suburb";
-    bool testVoterStatus = "Test Status";
 
     Voter testVoter(testVoterID, testVoterName, testVoterAge, testVoterSuburb);
     Voter newVoter(testVoter.ToBinary());
 
+    cout << "Voter: ";
     if(newVoter == testVoter){
         cout << "Passed";
     }else{
         cout << "Failed";
     }
     cout << endl;
-
+    cout << "------------------------------------------------" << endl;
 }
-
-

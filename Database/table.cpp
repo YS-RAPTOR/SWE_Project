@@ -12,14 +12,13 @@ Candidate::Candidate(unsigned long candidateID, string party,  string name, unsi
 //Convert Binary to Candidate
 Candidate::Candidate(string binary){
     string temp;
-    int field;
+    int field = 0;
     
     for (size_t i = 0; i < binary.length(); i++){
         if(binary[i] == '|' || binary[i] == '\n'){
             switch (field){
             case 0:
                 m_candidateID = BinaryToULong(temp);
-                cout << m_candidateID;
                 break;
             case 1:
                 m_party = BinaryToString(temp);
@@ -57,7 +56,16 @@ string Candidate::ToBinary(){
     string name_B = StringToBinary(m_name);
     string suburb_B = StringToBinary(m_suburb);
 
-    return candidateID_B.to_string() + "|" + party_B + "|" + name_B + "|" + age_B.to_string() + "|" + m_suburb + "|" + count_B.to_string() + '\n';
+    return candidateID_B.to_string() + "|" + party_B + "|" + name_B + "|" + age_B.to_string() + "|" + suburb_B + "|" + count_B.to_string() + '\n';
+}
+
+void Candidate::PrintInfo(){
+    cout << "Candidate ID: " << m_candidateID << endl;
+    cout << "Party: " << m_party << endl;
+    cout << "Name: " << m_name << endl;
+    cout << "Age: " << (int)m_age << endl;
+    cout << "Suburb: " << m_suburb << endl;
+    cout << "Count: " << m_count << endl;
 }
 
 //==Operator
@@ -85,8 +93,7 @@ Voter::Voter(unsigned long voterID, string name, unsigned char age, string subur
 //Convert Binary to Voter
 Voter::Voter(string binary){
     string temp;
-    int field;
-    
+    int field = 0;
     for (size_t i = 0; i < binary.length(); i++){
         if(binary[i] == '|' || binary[i] == '\n'){
             switch (field){
@@ -97,11 +104,11 @@ Voter::Voter(string binary){
                 m_name = BinaryToString(temp);
                 break;
             case 2:
-                m_age = BinaryToULong(temp);
+                m_age = BinaryToUChar(temp);
             case 3:
-                m_status = true ? (temp == "1") : false;
-            case 4:
                 m_suburb = BinaryToString(temp);
+            case 4:
+                m_status = (temp == "1") ? true : false;
             }
             field++;
             temp = "";
@@ -120,13 +127,21 @@ string Voter::ToBinary(){
     
     //convert strings to binary
     string name_B = StringToBinary(m_name);
-    string suburb_B = StringToBinary(m_name);
+    string suburb_B = StringToBinary(m_suburb);
     
     //convert boolean to binary
-    char status_B = '1' ? m_status : '0';
+    char status_B =  m_status ? '1' : '0';
 
-    return voterID_B.to_string() + "|" + name_B + "|" + suburb_B + "|" + age_B.to_string() + "|" + status_B + '\n';
+    return voterID_B.to_string() + "|" + name_B + "|" + age_B.to_string() + "|" + suburb_B + "|" + status_B + '\n';
     
+}
+
+void Voter::PrintInfo(){
+    cout << "Voter ID: " << m_voterID << endl;
+    cout << "Name: " << m_name << endl;
+    cout << "Age: " << (int)m_age << endl;
+    cout << "Suburb: " << m_suburb << endl;
+    cout << "Status: " << m_status << endl;
 }
 
 //==Operator
@@ -146,10 +161,13 @@ bool Voter::operator==(const Voter& other){
 
 string StringToBinary(string str){
     string binary = "";
+    
     for(int i = 0; i < str.length(); ++i){
         bitset<STRINGBITS> bits(str[i]);
         binary += bits.to_string();
+        
     }
+    
     return binary;
 }
 
@@ -162,11 +180,11 @@ string BinaryToString(string bin){
     return str;
 }
 
-unsigned char BinaryToULong(string bin){
+unsigned long BinaryToULong(string bin){
     return bitset<32>(bin).to_ulong();
 }
 
-unsigned long BinaryToUChar(string bin){
+unsigned char BinaryToUChar(string bin){
     return (unsigned char)bitset<8>(bin).to_ulong();
 }
 
