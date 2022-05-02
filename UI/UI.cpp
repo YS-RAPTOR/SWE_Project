@@ -1,6 +1,10 @@
 #include <iostream>
 #include<string>
+#include<cstdlib>
+#include <windows.h>
+
 void select(char menuchoice);
+void voteprint();
 using namespace std;
 int main()
 {
@@ -14,7 +18,7 @@ int main()
 	cout << " Enter L to display the largest number of votes\n";
 	cout << " Enter Q to Quit\n";
 	cout << " ===================================================== \n";
-	cout << "\t\tEnter your choice\t";
+	cout << "\t\tEnter your choice:\t";
 	cin >> menuchoice;
 	system("CLS");
 	select(menuchoice);
@@ -22,28 +26,35 @@ int main()
 }
 void select(char menuchoice) {
 
+	switch (menuchoice) {
 
-	if (menuchoice == 'P' || menuchoice == 'p') {
+	case 'P': 
+	case 'p':
 		cout << "1";
-	}
-	else if (menuchoice == 'A' || menuchoice == 'a') {
+		void print();
+		break;
+	case 'A': 
+	case 'a':
 		cout << "2";
-	}
-	else if (menuchoice == 'S' || menuchoice == 's') {
+		break;
+	case 'S': 
+	case 's':
 		cout << "3";
-	}
-	else if (menuchoice == 'L' || menuchoice == 'l') {
+		break;
+	case 'L': 
+	case 'l':
 		cout << "4";
-	}
-	else if (menuchoice == 'Q' || menuchoice == 'q') {
+		break;
+	case 'Q': 
+	case 'q':
 		cout << "5";
-	}
-	else {
+		break;
+	default:
 		cout << "\n\tUnknown selection, please try again\n\n";
-		int reset;
+		char reset;
 		cout << "\tPress 0 to go back to the menu\t";
 		cin >> reset;
-		if (reset == 0) {
+		if (reset == '0') {
 			system("CLS");
 			cout << " =====================================================\n";
 			cout << " \t\tMENU\n ";
@@ -58,9 +69,15 @@ void select(char menuchoice) {
 			cin >> menuchoice;
 		}
 		else {
-			cout << " Unknown selection, please try again ";
-			cout << "Press 0 to go back to the menu\t";
-			cin >> reset;
+			system("cls");
+			cout << "\n\t!! You have select the wrong option too many times, press any key to exit !!\n\n";
+	
 		}
+		break;
 	}
+}
+
+void voteprint()
+{
+
 }
