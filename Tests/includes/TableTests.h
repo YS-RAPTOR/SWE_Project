@@ -5,4 +5,8 @@
 
 using namespace std;
 
+void TestOperatorEqual();
+
 void TestBinaryConversion();
+
+void TestVote();

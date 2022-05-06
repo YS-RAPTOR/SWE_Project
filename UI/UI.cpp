@@ -10,7 +10,10 @@ void cand_record(char cand);
 void m_quit();
 void q_selector(char selected);
 using namespace std;
-int main()
+
+void select(char menuchoice);
+
+int UI()
 {
 	menu();
 	return 0;

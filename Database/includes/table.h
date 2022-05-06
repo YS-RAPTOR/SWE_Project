@@ -30,7 +30,10 @@ public:
 
     //Operators
     bool operator==(const Candidate& other);
-    
+
+    //Vote Function
+    void Vote();
+
     //Getters
     unsigned long CandidateID(){
         return m_candidateID;
@@ -76,6 +79,9 @@ public:
 
     //Operators
     bool operator==(const Voter& other);
+
+    //Vote Function
+    void Vote();
 
     //Getters
     unsigned long VoterID(){

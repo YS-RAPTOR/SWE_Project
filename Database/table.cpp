@@ -83,6 +83,11 @@ bool Candidate::operator==(const Candidate& other) {
     
 }
 
+//Vote Function
+void Candidate::Vote(){
+    m_count += 1;
+}
+
 /*Voter Class*/
 
 //Default Constructor
@@ -156,6 +161,10 @@ bool Voter::operator==(const Voter& other){
     }else return false;
 }
 
+//Vote Function
+void Voter::Vote(){
+    m_status = true;
+}
 
 /*Helper Functions*/
 

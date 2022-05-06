@@ -20,6 +20,7 @@ add_executable(Test
     Database/table.cpp
     UI/UI.cpp
     Tests/TableTests.cpp
+    Tests/DatabaseTests.cpp
 )
 
 target_include_directories(Test

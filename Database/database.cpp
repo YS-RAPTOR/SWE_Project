@@ -18,28 +18,56 @@ Database::~Database(){
     //Close File Streams
     m_candidateTable.close();
     m_voterTable.close();
+
+    #ifdef TESTING
+    remove(CANDIDATE_DATA_LOCATION);
+    remove(VOTER_DATA_LOCATION);
+    #endif
+}
+
+//Reset File Streams
+void Database::ResetCandidateTable(bool beginning){
+    m_candidateTable.clear();
+    if(beginning)
+        m_candidateTable.seekg(0, ios_base::beg);
+    else
+        m_candidateTable.seekg(0, ios_base::end);
+}
+
+//Reset File Streams
+void Database::ResetVoterTable(bool beginning){
+    m_voterTable.clear();
+    if(beginning)
+        m_voterTable.seekg(0, ios_base::beg);
+    else
+        m_voterTable.seekg(0, ios_base::end);
 }
 
 //Returns all Values that Satisfy a Query Function
 vector<Candidate> Database::CandidateQuery(bool (*query)(Candidate candidate, Candidate check), Candidate check, bool allResults){
+    ResetCandidateTable(true);
     string data;
     vector<Candidate> results;
-    while (getline(m_candidateTable, data, '\n')){
+    while (getline(m_candidateTable, data)){
+        data += '\n';
         Candidate candidate(data);
         if(query(candidate, check)){
             results.push_back(candidate);
             if(!allResults) break;
         }
     }
+    bool op = m_candidateTable.is_open();
     return results;
 }
 
-vector<Voter> Database::VoterQuery(bool (*query)(Voter voter) , bool allResults){
+vector<Voter> Database::VoterQuery(bool (*query)(Voter voter, Voter check), Voter check, bool allResults){
+    ResetVoterTable(true);
     string data;
     vector<Voter> results;
     while (getline(m_voterTable, data, '\n')){
+        data += '\n';
         Voter voter(data);
-        if(query(voter)){
+        if(query(voter, check)){
             results.push_back(voter);
             if(!allResults) break;
         }
@@ -49,13 +77,67 @@ vector<Voter> Database::VoterQuery(bool (*query)(Voter voter) , bool allResults)
 
 //Writes the Binary Data into the Tables. Also Checks if the status is fine.
 void Database::WriteToCandidateTable(Candidate candidate){
+    ResetCandidateTable(false);
     if(!m_candidateTableStatus) return;
     m_candidateTable << candidate.ToBinary();
+    m_candidateTable << flush;
 }
 
 void Database::WriteToVoterTable(Voter voter){
+    ResetVoterTable(false);
     if(!m_voterTableStatus) return;
     m_voterTable << voter.ToBinary();
+    m_voterTable << flush;
+}
+
+void Database::ReplaceCandidate(Candidate candidateToReplace, Candidate newCandidate){
+    ResetCandidateTable(true);
+    ofstream temp(TEMP_DATA_LOCATION);
+    string data;
+    while (getline(m_candidateTable, data, '\n')){
+        data += '\n';
+        Candidate candidate(data);
+        if(candidate == candidateToReplace){\
+            temp << newCandidate.ToBinary();
+        }else
+            temp << data;
+    }
+
+    temp << flush;
+
+    ///Close File Streams to Rename the files
+    m_candidateTable.close();
+    temp.close();
+
+    remove(CANDIDATE_DATA_LOCATION);
+    rename(TEMP_DATA_LOCATION, CANDIDATE_DATA_LOCATION);
+
+    m_candidateTable.open(CANDIDATE_DATA_LOCATION);
+}
+
+void Database::ReplaceVoter(Voter voterToReplace, Voter newVoter){
+    ResetVoterTable(true);
+    ofstream temp(TEMP_DATA_LOCATION);
+    string data;
+    while (getline(m_voterTable, data, '\n')){
+        data += '\n';
+        Voter voter(data);
+        if(voter == voterToReplace){\
+            temp << newVoter.ToBinary();
+        }else
+            temp << data;
+    }
+
+    temp << flush;
+
+    ///Close File Streams to Rename the files
+    m_voterTable.close();
+    temp.close();
+
+    remove(VOTER_DATA_LOCATION);
+    rename(TEMP_DATA_LOCATION, VOTER_DATA_LOCATION);
+
+    m_voterTable.open(VOTER_DATA_LOCATION);
 }
 
 bool Database::Vote(Voter voter, unsigned long candidateID, string party){
@@ -91,19 +173,52 @@ bool Database::Vote(Voter voter, unsigned long candidateID, string party){
         return false;
     }
 
-    //TODO Delete Candidate
+    //Applying the Voting.
+    Candidate candidateToBeReplaced = results[0];
+    results[0].Vote();
 
-    //TODO Delete Voter
+    Voter voterToBeReplaced = voter;
+    voter.Vote();
 
-    //TODO Write Candidate with 1 more vote
-
-    //TODO Write Voter with status True
-
+    //Replacing the data in the database
+    ReplaceCandidate(candidateToBeReplaced, results[0]);
+    ReplaceVoter(voterToBeReplaced, voter);
+    
     return true;
 }
 
-vector<Candidate> CandidateVoteInfo(bool most){
-    vector<Candidate> can;
-    return can;
-}
+vector<Candidate> Database::CandidateVoteInfo(bool most){
+    ResetCandidateTable(true);
+    vector<Candidate> results;
+    bool (*compare)(unsigned long a, unsigned long b);
+    unsigned long pass;
+    string data;
 
+    if(most){
+        pass = 0;
+        compare = [](unsigned long a, unsigned long b) -> bool{
+            return a > b;
+        };
+    }else{
+        pass = ULONG_MAX;
+        compare = [](unsigned long a, unsigned long b) -> bool{
+            return a < b;
+        };
+    }   
+
+    while (getline(m_candidateTable, data, '\n')){
+        Candidate candidate(data);
+        if(compare(candidate.Count(), pass)){
+            pass = candidate.Count();
+            results.clear();
+            results.push_back(candidate);
+
+        }else if(candidate.Count() == pass){
+            results.push_back(candidate);
+        }
+    }
+
+    if(results[0].Count() == 0) results.clear();
+
+    return results;
+}
