@@ -9,4 +9,4 @@ void TestOperatorEqual();
 
 void TestBinaryConversion();
 
-void TestVote();
+void TestVote_Class();

@@ -28,4 +28,4 @@ void TestCandidateInfoSingle();
 
 void TestCandidateInfoMultiple();
 
-void TestVote();
+void TestVote_Database();

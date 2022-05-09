@@ -207,17 +207,19 @@ vector<Candidate> Database::CandidateVoteInfo(bool most){
     }   
 
     while (getline(m_candidateTable, data, '\n')){
-        Candidate candidate(data);
+        Candidate candidate(data + '\n');
         if(compare(candidate.Count(), pass)){
             pass = candidate.Count();
             results.clear();
             results.push_back(candidate);
 
+        //Add more Candidates have Tied
         }else if(candidate.Count() == pass){
             results.push_back(candidate);
         }
     }
 
+    //Check If Everyone has Zero Votes.
     if(results[0].Count() == 0) results.clear();
 
     return results;

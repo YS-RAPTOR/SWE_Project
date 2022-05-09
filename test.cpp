@@ -5,12 +5,13 @@ int main(){
     cout << "------------------------------------------------" << endl;
     TestOperatorEqual();
     TestBinaryConversion();
-    TestVote();
+    TestVote_Class();
 
     TestIO();
     TestQuery();
     TestReplace();
-    TestVote();
     TestCandidateInfo();
+    TestVote_Database();
+    
     return 0;
 }

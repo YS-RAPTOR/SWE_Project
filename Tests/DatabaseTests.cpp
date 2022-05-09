@@ -265,16 +265,88 @@ void TestReplace(){
 }
 
 void TestCandidateInfo(){
+    Candidate votes_20_1((unsigned long)24680, "20 Party 1", "Twenties 1", 201, "Twentieth Street 1");
+    Candidate votes_20_2((unsigned long)13579, "20 Party 2", "Twenties 2", 202, "Twentieth Street 2");
+
+    for (int i = 0; i < 20; i++){
+        votes_20_1.Vote();
+        votes_20_2.Vote();
+    }
+    
     TestCandidateInfoEmpty();
+    Database::instance().WriteToCandidateTable(votes_20_1);
+    TestCandidateInfoSingle();
+    Database::instance().WriteToCandidateTable(votes_20_2);
+    TestCandidateInfoMultiple();
 }
 
-void TestCandidateInfoEmpty();
+void TestCandidateInfoEmpty(){
+    cout << "Testing Candidate Info When Empty\n";
+    auto resultsTrue = Database::instance().CandidateVoteInfo(true);
+    auto resultsFalse = Database::instance().CandidateVoteInfo(false);
+    
+    if(resultsTrue.empty()){
+        cout << "Most: True";
+    }else
+        cout << "Most: False";
 
-void TestCandidateInfoSingle();
+    cout << endl;
+    
+    if(resultsFalse.empty()){
+        cout << "Least: True";
+    }else
+        cout << "Least: False";
 
-void TestCandidateInfoMultiple();
+    cout << endl;
 
-void TestVote(){
+    cout << "------------------------------------------------" << endl;
+}
+
+void TestCandidateInfoSingle(){
+    cout << "Testing Candidate Info When Single Candidate with Most Votes\n";
+    auto resultsTrue = Database::instance().CandidateVoteInfo(true);
+    auto resultsFalse = Database::instance().CandidateVoteInfo(false);
+    
+    if(resultsTrue.size() == 1){
+        cout << "Most: True";
+    }else
+        cout << "Most: False";
+
+    cout << endl;
+    
+    if(resultsFalse.empty()){
+        cout << "Least: True";
+    }else
+        cout << "Least: False";
+
+    cout << endl;
+
+    cout << "------------------------------------------------" << endl;
+}
+
+void TestCandidateInfoMultiple(){
+    cout << "Testing Candidate Info When Many Candidates with Most VOtes\n";
+    auto resultsTrue = Database::instance().CandidateVoteInfo(true);
+    auto resultsFalse = Database::instance().CandidateVoteInfo(false);
+    
+    if(resultsTrue.size() == 2){
+        cout << "Most: True";
+    }else
+        cout << "Most: False";
+
+    cout << endl;
+    
+    if(resultsFalse.empty()){
+        cout << "Least: True";
+    }else
+        cout << "Least: False";
+
+    cout << endl;
+    
+    cout << "------------------------------------------------" << endl;
+}
+
+void TestVote_Database(){
     cout << "Testing Voting\n";
 
 }

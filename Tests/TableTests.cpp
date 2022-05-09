@@ -80,7 +80,7 @@ void TestBinaryConversion(){
     cout << "------------------------------------------------" << endl;
 }
 
-void TestVote(){
+void TestVote_Class(){
     cout << "Testing Voting\n";
     
     //Test Candidate Equal Operator
