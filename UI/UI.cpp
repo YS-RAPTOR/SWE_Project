@@ -9,9 +9,9 @@ void voteprint();
 void cand_record(char cand);
 void m_quit();
 void q_selector(char selected);
+void select(char menuchoice);
 using namespace std;
 
-void select(char menuchoice);
 
 int UI()
 {
@@ -20,7 +20,8 @@ int UI()
 }
 void menu()
 {
-	// asking the user to select an option from the menu
+	// menu is displayed 
+	//asking the user to select an option from the menu
 	char menuchoice;
 	cout << " =====================================================\n";
 	cout << " \t\tMENU\n ";
@@ -37,7 +38,7 @@ void menu()
 	select(menuchoice);
 }
 void select(char menuchoice) {
-	// making sure the selection is valid 
+	// making sure the selection is valid and defining what to do with the selected option
 	switch (menuchoice) {
 
 	case 'P': 
@@ -60,35 +61,16 @@ void select(char menuchoice) {
 	case 'q':
 		m_quit();
 		break;
+		// if the users have entered the wrong selected, display a message and return to main menu
 	default:
 		cout << "\n\tUnknown selection, please try again\n\n";
-		char reset;
-		cout << "\tPress 0 to go back to the menu\t";
-		cin >> reset;
-		if (reset == '0') {
-			system("CLS");
-			cout << " =====================================================\n";
-			cout << " \t\tMENU\n ";
-			cout << "=====================================================\n";
-			cout << " Enter P to print the record of (selected) candidate\n";
-			cout << " Enter A to add your vote\n";
-			cout << " Enter S to display the smallest number of votes\n";
-			cout << " Enter L to display the largest number of votes\n";
-			cout << " Enter Q to Quit\n";
-			cout << " ===================================================== \n";
-			cout << "\t\tEnter your choice\t";
-			cin >> menuchoice;
-		}
-		else {
-			system("cls");
-			cout << "\n\t!! You have select the wrong option too many times, press any key to exit !!\n\n";
-	
-		}
+			menu();
 		break;
 	}
 }
 
 void voteprint()
+// if the user selected P they will be directed to this menu fo further selection
 {
 	char cand;
 	cout << " =====================================================\n";
@@ -120,26 +102,7 @@ void cand_record(char cand)
 		break;
 	default:
 		cout << "\n\tUnknown selection, please try again\n\n";
-		char rest;
-		cout << "\tPress 0 to go back to the menu\t";
-		cin >> rest;
-		if (rest == '0') {
-			system("CLS");
-			cout << " =====================================================\n";
-			cout << " \t\t CANDIDATE lIST\n ";
-			cout << "=====================================================\n";
-			cout << " Enter CH to print the record of this guy\n";
-			cout << " Enter FG to print the record of this guy\n";
-			cout << " Enter KL to print the record of this guy\n";
-			cout << " ===================================================== \n";
-			cout << "\t\tEnter candidate's initial:\t";
-			cin >> cand;
-		}
-		else {
-			system("cls");
-			cout << "\n\t!! You have select the wrong option too many times, press any key to exit !!\n\n";
-
-		}
+		voteprint();
 		break;
 	}
 }
@@ -159,6 +122,7 @@ void q_selector(char selected)
 	{
 	case 'Y':
 	case 'y':
+		system("exit");
 
 		break;
 	case 'N':
@@ -167,8 +131,8 @@ void q_selector(char selected)
 		menu();
 		break;
 	default:
-		cout << "\n\tUnknown selection, please try again\n\n";
 		system("cls");
+		cout << "\n\tUnknown selection, please try again\n\n";
 		m_quit();
 		break;
 	}
