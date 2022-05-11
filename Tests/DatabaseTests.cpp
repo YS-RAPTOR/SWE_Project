@@ -286,16 +286,16 @@ void TestCandidateInfoEmpty(){
     auto resultsFalse = Database::instance().CandidateVoteInfo(false);
     
     if(resultsTrue.empty()){
-        cout << "Most: True";
+        cout << "Most: Passed";
     }else
-        cout << "Most: False";
+        cout << "Most: Failed";
 
     cout << endl;
     
     if(resultsFalse.empty()){
-        cout << "Least: True";
+        cout << "Least: Passed";
     }else
-        cout << "Least: False";
+        cout << "Least: Failed";
 
     cout << endl;
 
@@ -308,16 +308,16 @@ void TestCandidateInfoSingle(){
     auto resultsFalse = Database::instance().CandidateVoteInfo(false);
     
     if(resultsTrue.size() == 1){
-        cout << "Most: True";
+        cout << "Most: Passed";
     }else
-        cout << "Most: False";
+        cout << "Most: Failed";
 
     cout << endl;
     
-    if(resultsFalse.empty()){
-        cout << "Least: True";
+    if(resultsFalse.size() > 1 && resultsFalse[0].Count() == 0){
+        cout << "Least: Passed";
     }else
-        cout << "Least: False";
+        cout << "Least: Failed";
 
     cout << endl;
 
@@ -325,21 +325,21 @@ void TestCandidateInfoSingle(){
 }
 
 void TestCandidateInfoMultiple(){
-    cout << "Testing Candidate Info When Many Candidates with Most VOtes\n";
+    cout << "Testing Candidate Info When Many Candidates with Most V0tes\n";
     auto resultsTrue = Database::instance().CandidateVoteInfo(true);
     auto resultsFalse = Database::instance().CandidateVoteInfo(false);
     
     if(resultsTrue.size() == 2){
-        cout << "Most: True";
+        cout << "Most: Passed";
     }else
-        cout << "Most: False";
+        cout << "Most: Failed";
 
     cout << endl;
     
-    if(resultsFalse.empty()){
-        cout << "Least: True";
+    if(resultsFalse.size() > 1 && resultsFalse[0].Count() == 0){
+        cout << "Least: Passed";
     }else
-        cout << "Least: False";
+        cout << "Least: Failed";
 
     cout << endl;
     
@@ -348,5 +348,31 @@ void TestCandidateInfoMultiple(){
 
 void TestVote_Database(){
     cout << "Testing Voting\n";
+    Candidate testVoteReceiver((unsigned long)420696969, "Labour 1", "Noah", 20, "Tilted Towers");
+    Voter testVoteVoter((unsigned long)616815165651, "Noah", 19, "Tilted Towers" );
+
+    Database::instance().WriteToCandidateTable(testVoteReceiver);
+    Database::instance().WriteToVoterTable(testVoteVoter);
+
+    Database::instance().Vote(testVoteVoter, 420696969, "");
+    Database::instance().Vote(testVoteVoter, 0, "Labour 1");
+
+    auto candidateCheck = Database::instance().CandidateQuery([](Candidate candidate, Candidate check)->bool{
+        return candidate.CandidateID() == check.CandidateID();
+    }, testVoteReceiver, true);
+
+    auto voteCheck = Database::instance().VoterQuery([](Voter voter, Voter check)->bool{
+        return voter.VoterID() == check.VoterID();
+    }, testVoteVoter, true);
+
+    cout << "Vote: ";
+
+    if(candidateCheck.size() == 1 && candidateCheck[0].Count() == 2 && voteCheck.size() == 1 && voteCheck[0].Status()){
+        cout << "Passed";
+    }else
+        cout << "Failed";
+
+    cout << endl;
+    cout << "------------------------------------------------" << endl;
 
 }

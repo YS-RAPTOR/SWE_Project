@@ -145,7 +145,7 @@ bool Database::Vote(Voter voter, unsigned long candidateID, string party){
     Candidate check;
     bool (*query)(Candidate candidate, Candidate check);
 
-    if(!candidateID){
+    if(candidateID){
         check = Candidate(candidateID, "", "", 0, voter.Suburb());
         query = [](Candidate candidate, Candidate check) -> bool{
             if(candidate.CandidateID() == check.CandidateID() && candidate.Suburb() == check.Suburb()){
@@ -192,6 +192,7 @@ vector<Candidate> Database::CandidateVoteInfo(bool most){
     vector<Candidate> results;
     bool (*compare)(unsigned long a, unsigned long b);
     unsigned long pass;
+    int lines = 0;
     string data;
 
     if(most){
@@ -208,6 +209,7 @@ vector<Candidate> Database::CandidateVoteInfo(bool most){
 
     while (getline(m_candidateTable, data, '\n')){
         Candidate candidate(data + '\n');
+        lines++;
         if(compare(candidate.Count(), pass)){
             pass = candidate.Count();
             results.clear();
@@ -220,7 +222,8 @@ vector<Candidate> Database::CandidateVoteInfo(bool most){
     }
 
     //Check If Everyone has Zero Votes.
-    if(results[0].Count() == 0) results.clear();
+    if(results[0].Count() == 0 && results.size() == lines) results.clear();
+
 
     return results;
 }

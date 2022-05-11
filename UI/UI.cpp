@@ -1,25 +1,12 @@
-#pragma once
-#include <iostream>
-#include<string>
-#include<cstdlib>
-#include <windows.h>
-void menu();
-void select(char menuchoice);
-void voteprint();
-void cand_record(char cand);
-void m_quit();
-void q_selector(char selected);
-void select(char menuchoice);
-using namespace std;
+#include "UI.h"
 
 
-int UI()
-{
+int UI(){
 	menu();
 	return 0;
 }
-void menu()
-{
+
+void menu(){
 	// menu is displayed 
 	//asking the user to select an option from the menu
 	char menuchoice;
