@@ -1,12 +1,26 @@
-#include "UI.h"
+#pragma once
+#include <iostream>
+#include<string>
+#include<cstdlib>
+#include <cctype>
+#include <windows.h>
+void menu();
+void select(char menuchoice);
+void voteprint();
+void cand_record(char cand);
+void m_quit();
+void q_selector(char selected);
+void select(char menuchoice);
+using namespace std;
 
 
-int UI(){
+int main()
+{
 	menu();
 	return 0;
 }
-
-void menu(){
+void menu()
+{
 	// menu is displayed 
 	//asking the user to select an option from the menu
 	char menuchoice;
@@ -26,71 +40,71 @@ void menu(){
 }
 void select(char menuchoice) {
 	// making sure the selection is valid and defining what to do with the selected option
-	switch (menuchoice) {
+	switch (tolower(menuchoice)) {
 
-	case 'P': 
 	case 'p':
-	voteprint();
+		voteprint();
 		break;
-	case 'A': 
 	case 'a':
 		cout << "2";
 		break;
-	case 'S': 
 	case 's':
 		cout << "3";
 		break;
-	case 'L': 
 	case 'l':
 		cout << "4";
 		break;
-	case 'Q': 
 	case 'q':
 		m_quit();
 		break;
 		// if the users have entered the wrong selected, display a message and return to main menu
 	default:
-		cout << "\n\tUnknown selection, please try again\n\n";
+		// infinite while loop
+		while (true) {
+			cout << "\n\tUnknown selection, please try again\n\n";
 			menu();
+		}
 		break;
 	}
 }
 
 void voteprint()
 // if the user selected P they will be directed to this menu fo further selection
+// they are given the option to choose between candidate's ID or party name to select the candidate
+// once they have made a selection, they then will be redirected again
 {
 	char cand;
+	cout << "  =====================================================\n";
+	cout << " \t\t CANDIDATE\n ";
 	cout << " =====================================================\n";
-	cout << " \t\t CANDIDATE lIST\n ";
-	cout << " =====================================================\n";
-	cout << " Enter 1 to print the record of this guy\n";
-	cout << " Enter 2 to print the record of this guy\n";
-	cout << " Enter 3 to print the record of this guy\n";
-	cout << " ===================================================== \n";
-	cout << "\t\tEnter candidate's initial:\t";
+	cout << "  Enter 1 if you know the Candidate's ID \n";
+	cout << "  Enter 2 if you know the Party name\n";
+	cout << "  ===================================================== \n";
+	cout << "\t\t:\t";
 	cin >> cand;
 	system("CLS");
 	cand_record(cand);
 }
 void cand_record(char cand)
 {
-	switch (cand){
-	case '1':
-		cout << "22";
-		// babaaabb
-		break;
-	case '2':
-		cout << "223";
-		// fhahhss
-		break;
-	case '3':
-		cout << "223";
-		// fgihasfa
-		break;
-	default:
-		cout << "\n\tUnknown selection, please try again\n\n";
-		voteprint();
-		break;
+	if (cand == '1') {
+		string CandID;
+		cout << " =====================================================\n";
+		cout << " Enter the Candidate's ID:\t";
+		cin >> CandID;
+	}
+
+	else if (cand == '2') {
+		string Party_Name;
+		cout << " =====================================================\n";
+		cout << " Enter the Party name:\t";
+		cin >> Party_Name;
+	}
+	else{
+		while (true) {
+			cout << "\n\tUnknown selection, please try again\n\n";
+			voteprint();
+		}
 	}
 }
 void m_quit()
@@ -105,22 +119,22 @@ void m_quit()
 }
 void q_selector(char selected)
 {
-	switch (selected)
+	switch (tolower(selected))
 	{
-	case 'Y':
 	case 'y':
 		system("exit");
 
 		break;
-	case 'N':
 	case 'n':
 		system("cls");
 		menu();
 		break;
 	default:
+		while (true) {
 		system("cls");
 		cout << "\n\tUnknown selection, please try again\n\n";
-		m_quit();
+			m_quit();
+		}
 		break;
 	}
 }
