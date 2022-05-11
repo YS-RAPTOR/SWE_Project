@@ -1,26 +1,73 @@
-#pragma once
-#include <iostream>
-#include<string>
-#include<cstdlib>
-#include <cctype>
-#include <windows.h>
-void menu();
-void select(char menuchoice);
-void voteprint();
-void cand_record(char cand);
-void m_quit();
-void q_selector(char selected);
-void select(char menuchoice);
-using namespace std;
+#include "UI.h"
 
 
-int main()
-{
-	menu();
-	return 0;
+void UI(){
+
+	Voter voter = Login();
+
+	bool running = true;
+
+	//Program Loop
+	while(running){
+		
+		char menuChoice = Menu();
+
+		switch (tolower(menuChoice)) {
+		case 'p':
+			voteprint();
+			break;
+		case 'a':
+			
+			break;
+		case 's':
+			
+			break;
+		case 'l':
+			
+			break;
+		case 'q':
+			if(AreYouSure("quit")){
+				running = false;
+			}
+			break;
+		// if the users have entered the wrong selected, display a message and return to main menu
+		default:
+			cout << "\n\tUnknown selection, please try again\n\n";
+			cin.clear();
+			cin.ignore();
+			break;
+		}
+		
+	}
 }
-void menu()
-{
+
+Voter Login(){
+	while (true){
+		unsigned long ID;
+		char unsigned age;
+		cout << "Please Enter Voter ID: ";
+		cin >> ID;
+		cout << "Please Enter Your Age: ";
+		cin >> age;
+		
+		Voter check(ID, "", 0, "");
+
+		auto results = Database::instance().VoterQuery([](Voter voter, Voter check)->bool{
+			return voter.VoterID() == check.VoterID();
+		}, check, true);
+
+		if(results.empty() || results.size() > 1 || results[0].Age() != age){
+			cout << "Invalid Login";
+			cin.clear();
+			cin.ignore();
+		}else{
+			return results[0];
+		}
+	}
+}
+
+char Menu(){
+
 	// menu is displayed 
 	//asking the user to select an option from the menu
 	char menuchoice;
@@ -36,36 +83,29 @@ void menu()
 	cout << "\t\tEnter your choice:\t";
 	cin >> menuchoice;
 	system("CLS");
-	select(menuchoice);
+	return menuchoice;
 }
-void select(char menuchoice) {
-	// making sure the selection is valid and defining what to do with the selected option
-	switch (tolower(menuchoice)) {
 
-	case 'p':
-		voteprint();
-		break;
-	case 'a':
-		cout << "2";
-		break;
-	case 's':
-		cout << "3";
-		break;
-	case 'l':
-		cout << "4";
-		break;
-	case 'q':
-		m_quit();
-		break;
-		// if the users have entered the wrong selected, display a message and return to main menu
-	default:
-		// infinite while loop
-		while (true) {
-			cout << "\n\tUnknown selection, please try again\n\n";
-			menu();
-		}
-		break;
+bool IsCandidateID(string data){
+	for (int i = 0; i < data.size(); i++){
+		if(isalpha(data[i]))
+			return false;
 	}
+	return true;
+}
+
+void Vote(Voter voter){
+	string input;
+	cout << "Enter Candidate ID or the Party YOu wish to Vote for: ";
+	getline(cin, input);
+
+	if(IsCandidateID(input)){
+		Database::instance().Vote(voter, stoul(input), "");
+	}else{	
+		Database::instance().Vote(voter, 0, input);
+	}
+
+
 }
 
 void voteprint()
@@ -107,34 +147,24 @@ void cand_record(char cand)
 		}
 	}
 }
-void m_quit()
-{
-	char selected;
-	cout << "\n\n\t\tAre you sure you want to exit?\n\n" << endl;
-	cout << " \t==================================================\n";
-	cout << "\tpress Y for exit\tpress N to return to menu\n";
-	cin >> selected;
-	q_selector(selected);
+bool AreYouSure(string prompt){
+	
+	while (true){
+		char selected;
+		cout << "\n\n\t\tAre you sure you want to" << prompt <<"?\n\n" << endl;
+		cout << " \t==================================================\n";
+		cout << "\tpress 'Y' for" << prompt << "\tpress 'N' to return to menu\n";
+		cin >> selected;
+		selected = tolower(selected);
 
-}
-void q_selector(char selected)
-{
-	switch (tolower(selected))
-	{
-	case 'y':
-		system("exit");
-
-		break;
-	case 'n':
-		system("cls");
-		menu();
-		break;
-	default:
-		while (true) {
-		system("cls");
-		cout << "\n\tUnknown selection, please try again\n\n";
-			m_quit();
+		if(selected == 'y'){
+			return true;
+		}else if(selected == 'n'){
+			return false;
+		}else{
+			cin.clear();
+			cin.ignore();
+			cout << "Unknown selection, please try again.";
 		}
-		break;
 	}
 }

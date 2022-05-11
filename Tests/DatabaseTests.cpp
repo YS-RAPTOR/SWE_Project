@@ -225,7 +225,7 @@ void TestReplace(){
     Database::instance().ReplaceCandidate(candidateToBeReplaced, candidateToReplace);
 
     auto checkIfReplacedValueIsPresent_candidate = Database::instance().CandidateQuery([](Candidate candidate, Candidate check)->bool{
-        return candidate == check;
+        return candidate.CandidateID() == check.CandidateID();
     }, candidateToBeReplaced, true);
 
     auto checkIfReplacedSuccessfully_candidate = Database::instance().CandidateQuery([](Candidate candidate, Candidate check)->bool{
