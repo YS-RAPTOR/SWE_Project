@@ -108,44 +108,41 @@ void Vote(Voter voter){
 
 }
 
-void voteprint()
+void voteprint(Voter voter)
 // if the user selected P they will be directed to this menu fo further selection
 // they are given the option to choose between candidate's ID or party name to select the candidate
 // once they have made a selection, they then will be redirected again
 {
-	char cand;
+	string cand;
 	cout << "  =====================================================\n";
 	cout << " \t\t CANDIDATE\n ";
 	cout << " =====================================================\n";
-	cout << "  Enter 1 if you know the Candidate's ID \n";
-	cout << "  Enter 2 if you know the Party name\n";
+	cout << "  Enter Candidate's ID or the Party name:\n";
 	cout << "  ===================================================== \n";
 	cout << "\t\t:\t";
-	cin >> cand;
+	getline(cin,cand);
 	system("CLS");
-	cand_record(cand);
-}
-void cand_record(char cand)
-{
-	if (cand == '1') {
-		string CandID;
-		cout << " =====================================================\n";
-		cout << " Enter the Candidate's ID:\t";
-		cin >> CandID;
+	if (IsCandidateID(cand)) {
+		Candidate cand_new(stoul(cand), "", "", 0, "");
+		vector<Candidate> resultCandidate = Database::instance().CandidateQuery([](Candidate candidate, Candidate check)->bool {
+			return candidate.CandidateID() == check.CandidateID();
+			}, cand_new, true);
+		if (resultCandidate.empty() && resultCandidate.size() > 1)
+			cout << "invalid Candidate";
+		else
+			resultCandidate[0].PrintInfo();
+	}
+	else {
+		Candidate cand_new(0, "", cand, 0, voter.Suburb());
+			auto resultCandidate = Database::instance().CandidateQuery([](Candidate candidate, Candidate check)->bool {
+			return candidate.Party() == check.Party() && check.Suburb() == candidate.Suburb();
+				}, cand_new, true);
+			if (resultCandidate.empty() && resultCandidate.size() > 1)
+				cout << "invalid Party name";
+			else
+				resultCandidate[0].PrintInfo();
 	}
 
-	else if (cand == '2') {
-		string Party_Name;
-		cout << " =====================================================\n";
-		cout << " Enter the Party name:\t";
-		cin >> Party_Name;
-	}
-	else{
-		while (true) {
-			cout << "\n\tUnknown selection, please try again\n\n";
-			voteprint();
-		}
-	}
 }
 bool AreYouSure(string prompt){
 	
