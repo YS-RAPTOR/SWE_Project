@@ -118,14 +118,6 @@ string Menu(){
 	return Input;
 }
 
-bool ContainsCharacters(string data){
-	for (int i = 0; i < data.size(); i++){
-		if(isalpha(data[i]))
-			return false;
-	}
-	return true;
-}
-
 void Vote(Voter voter){
 	string input;
 	cout << "Enter Candidate ID or the Party You Wish to Vote for: ";
@@ -168,7 +160,7 @@ void PrintCandidate(Voter voter){
 		//Query Database
 		Candidate check(0, input, "", 0, voter.Suburb());
 		auto resultCandidate = Database::instance().CandidateQuery([](Candidate candidate, Candidate check)->bool {
-			return candidate.Party() == check.Party() && check.Suburb() == candidate.Suburb();
+			return StrToLower(candidate.Party()) == StrToLower(check.Party()) && check.Suburb() == candidate.Suburb();
 			}, check, true);
 
 		//Check if Candidate is Valid
@@ -216,4 +208,21 @@ bool AreYouSure(string prompt){
 			continue;
 		}
 	}
+}
+
+string StrToLower(string str){
+	string lower;
+	for (int i = 0; i < str.size(); i++){
+		lower += tolower(str[i]);
+	}
+
+	return lower;
+}
+
+bool ContainsCharacters(string data){
+	for (int i = 0; i < data.size(); i++){
+		if(isalpha(data[i]))
+			return false;
+	}
+	return true;
 }
