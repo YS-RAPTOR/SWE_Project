@@ -8,7 +8,7 @@ void UI(){
 	while(running){
 		char menuChoice;
 		string Input = Menu();
-		
+		vector<Candidate> candidatesResults;
 		//Check if Input is Valid
 		if(Input.length() == 1){
 			menuChoice = tolower(Input[0]);
@@ -24,13 +24,49 @@ void UI(){
 			PrintCandidate(voter);
 			break;
 		case 'a':
-			
+			Vote(voter);
 			break;
 		case 's':
-			
+			candidatesResults = Database::instance().CandidateVoteInfo(false);
+			if (candidatesResults.empty()){
+				cout << "There are no recorded votes" << endl;
+			}
+			else if (candidatesResults.size()==1){
+				cout << "The candidate with the least votes is: " << endl;
+				candidatesResults[0].PrintInfo();
+			}
+			else {
+				cout << "The candidates with the least votes are: " << endl; 
+
+				for (size_t i = 0; i < candidatesResults.size(); i++)
+				{
+					candidatesResults[i].PrintInfo();
+
+				}
+				
+			}
+
+
 			break;
 		case 'l':
-			
+			candidatesResults = Database::instance().CandidateVoteInfo(true);
+			if (candidatesResults.empty()){
+				cout << "There are no recorded votes" << endl;
+			}
+			else if (candidatesResults.size()==1){
+				cout << "The candidate with the most votes is: " << endl;
+				candidatesResults[0].PrintInfo();
+			}
+			else {
+				cout << "The candidates with the most votes are: " << endl; 
+
+				for (size_t i = 0; i < candidatesResults.size(); i++)
+				{
+					candidatesResults[i].PrintInfo();
+					
+				}
+				
+			}
 			break;
 		case 'q':
 			if(AreYouSure("Quit")){
@@ -117,6 +153,7 @@ string Menu(){
 	getline(cin, Input);
 	return Input;
 }
+
 
 void Vote(Voter voter){
 	string input;
