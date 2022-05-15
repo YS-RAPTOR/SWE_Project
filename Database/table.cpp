@@ -1,7 +1,5 @@
 #include "table.h"
-#include <iostream>
 
-using namespace std;
 /*Candidate Class*/
 
 //Default Constructor
@@ -66,6 +64,17 @@ void Candidate::PrintInfo(){
     cout << "Age: " << (int)m_age << endl;
     cout << "Suburb: " << m_suburb << endl;
     cout << "Count: " << m_count << endl;
+}
+
+string Candidate::ToString(){
+    stringstream ss;
+    ss << "Candidate ID: " << m_candidateID << endl;
+    ss << "Party: " << m_party << endl;
+    ss << "Name: " << m_name << endl;
+    ss << "Age: " << (int)m_age << endl;
+    ss << "Suburb: " << m_suburb << endl;
+    ss << "Count: " << m_count << endl;
+    return ss.str();
 }
 
 //==Operator
@@ -147,6 +156,16 @@ void Voter::PrintInfo(){
     cout << "Age: " << (int)m_age << endl;
     cout << "Suburb: " << m_suburb << endl;
     cout << "Status: " << m_status << endl;
+}
+
+string Voter::ToString(){
+    stringstream ss;
+    ss << "Voter ID: " << m_voterID << endl;
+    ss << "Name: " << m_name << endl;
+    ss << "Age: " << (int)m_age << endl;
+    ss << "Suburb: " << m_suburb << endl;
+    ss << "Status: " << m_status << endl;
+    return ss.str();
 }
 
 //==Operator

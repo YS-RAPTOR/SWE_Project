@@ -2,13 +2,20 @@
 
 
 void UI(){
+	//Login Function to get Voter Information
 	Voter voter = Login();
+
+	//Check if Quitting from Login Screen
+	if(voter == Voter(0, "", 0, ""))
+		return;
+
 	bool running = true;
 	//Program Loop
 	while(running){
 		char menuChoice;
 		string Input = Menu();
 		vector<Candidate> candidatesResults;
+
 		//Check if Input is Valid
 		if(Input.length() == 1){
 			menuChoice = tolower(Input[0]);
@@ -24,52 +31,56 @@ void UI(){
 			PrintCandidate(voter);
 			break;
 		case 'a':
-			Vote(voter);
+			system("CLS");
+			if(!voter.Status()){
+				Vote(voter);
+			}else{
+				cout << "You Have Already Cast Your Ballot!" << endl;
+				system("pause");
+			}
 			break;
 		case 's':
+			system("CLS");
 			candidatesResults = Database::instance().CandidateVoteInfo(false);
 			if (candidatesResults.empty()){
-				cout << "There are no recorded votes" << endl;
+				cout << "There are no Recorded Votes" << endl;
 			}
 			else if (candidatesResults.size()==1){
-				cout << "The candidate with the least votes is: " << endl;
+				cout << "The Candidate with the Least Votes is: " << endl;
+				cout << endl;
 				candidatesResults[0].PrintInfo();
 			}
 			else {
-				cout << "The candidates with the least votes are: " << endl; 
-
-				for (size_t i = 0; i < candidatesResults.size(); i++)
-				{
+				cout << "The Candidates with the Least Votes are: " << endl; 
+				for (size_t i = 0; i < candidatesResults.size(); i++){
+					cout << endl;
 					candidatesResults[i].PrintInfo();
-
 				}
-				
 			}
-
-
+			system("pause");
 			break;
 		case 'l':
+			system("CLS");
 			candidatesResults = Database::instance().CandidateVoteInfo(true);
 			if (candidatesResults.empty()){
-				cout << "There are no recorded votes" << endl;
+				cout << "There are no Recorded Votes" << endl;
 			}
 			else if (candidatesResults.size()==1){
-				cout << "The candidate with the most votes is: " << endl;
+				cout << "The Candidate with the Most Votes is: " << endl;
+				cout << endl;
 				candidatesResults[0].PrintInfo();
 			}
 			else {
-				cout << "The candidates with the most votes are: " << endl; 
-
-				for (size_t i = 0; i < candidatesResults.size(); i++)
-				{
+				cout << "The Candidates with the Most Votes are: " << endl; 
+				for (size_t i = 0; i < candidatesResults.size(); i++){
+					cout << endl;
 					candidatesResults[i].PrintInfo();
-					
 				}
-				
 			}
+			system("pause");
 			break;
 		case 'q':
-			if(AreYouSure("Quit")){
+			if(AreYouSure("Quit", "")){
 				running = false;
 			}
 			break;
@@ -90,12 +101,16 @@ Voter Login(){
 
 		unsigned long ID = 0; 
 		char unsigned age = 0;
-		//TODO Quit Here
+		cout << "Enter Q to Quit." << endl;
 		cout << "Please Enter Voter ID: ";
 		getline(cin, data);
 
+		//Check if Quitting
+		if(data == "Q" || data == "q")
+			return Voter(0, "",0, "");
+		
 		//If You can Convert Input To ID Convert It Otherwise Continue
-		if(ContainsCharacters(data))
+		else if(DoesntContainCharacters(data))
 			ID = stoul(data);
 		else{
 			cout << "Invalid Input, Please Try Again!" << endl;
@@ -106,8 +121,13 @@ Voter Login(){
 
 		cout << "Please Enter Your Age: ";
 		getline(cin, data);
+		
+		//Check if Quiting
+		if(data == "Q" || data == "q")
+			return Voter(0, "",0, "");
+		
 		//If You can Convert Input To Age Convert It Otherwise Continue
-		if(ContainsCharacters(data))
+		if(DoesntContainCharacters(data))
 			age = (unsigned char)stoi(data);
 		else{
 			cout << "Invalid Input, Please Try Again!" << endl;
@@ -155,18 +175,45 @@ string Menu(){
 }
 
 
-void Vote(Voter voter){
+void Vote(Voter& voter){
 	string input;
 	cout << "Enter Candidate ID or the Party You Wish to Vote for: ";
 	getline(cin, input);
 
-	if(ContainsCharacters(input)){
-		Database::instance().Vote(voter, stoul(input), "");
+	if(DoesntContainCharacters(input)){
+		//Query Database
+		Candidate check(stoul(input), "", "", 0, "");
+		auto resultCandidate = Database::instance().CandidateQuery([](Candidate candidate, Candidate check)->bool {
+				return candidate.CandidateID() == check.CandidateID();
+			}, check, true);
+
+		//Check if Candidate is Valid
+		if (resultCandidate.empty() || resultCandidate.size() > 1){
+			cout << "Invalid Candidate ID!" << endl;
+			system("pause");
+		}else{
+			resultCandidate[0].PrintInfo();
+			if(AreYouSure("Vote For This Candidate", "\n" + resultCandidate[0].ToString())){
+				Database::instance().Vote(voter, stoul(input), "");
+			}
+		}
 	}else{	
-		Database::instance().Vote(voter, 0, input);
+		//Query Database
+		Candidate check(0, input, "", 0, voter.Suburb());
+		auto resultCandidate = Database::instance().CandidateQuery([](Candidate candidate, Candidate check)->bool {
+			return StrToLower(candidate.Party()) == StrToLower(check.Party()) && check.Suburb() == candidate.Suburb();
+			}, check, true);
+
+		//Check if Candidate is Valid
+		if (resultCandidate.empty() || resultCandidate.size() > 1){
+			cout << "Invalid Party Name!" << endl;
+			system("pause");
+		}else{
+			if(AreYouSure("Vote For This Candidate", "\n" + resultCandidate[0].ToString())){
+				Database::instance().Vote(voter, 0, input);
+			}
+		}
 	}
-
-
 }
 
 // if the user selected P they will be directed to this menu fo further selection
@@ -180,7 +227,7 @@ void PrintCandidate(Voter voter){
 	getline(cin, input);
 
 	//Check If User Entered Candidate ID or Party Name
-	if (ContainsCharacters(input)) {
+	if (DoesntContainCharacters(input)) {
 		//Query Database
 		Candidate check(stoul(input), "", "", 0, "");
 		auto resultCandidate = Database::instance().CandidateQuery([](Candidate candidate, Candidate check)->bool {
@@ -206,19 +253,18 @@ void PrintCandidate(Voter voter){
 		else
 			resultCandidate[0].PrintInfo();
 	}
-	cout << endl;
 	system("pause");
 	system("CLS");
 }
 
-bool AreYouSure(string prompt){
+bool AreYouSure(string prompt, string extra){
 	while (true){
 		system("CLS");
 		string data = "";
 		char selected;
 
 		//Print Options
-		cout << "Are You Sure You Want to " << prompt <<"?" << endl;
+		cout << "Are You Sure You Want to " << prompt << "?" << extra << endl;
 		cout << "==================================================\n";
 		cout << "Press 'Y' To " << prompt << "\nOr\nPress 'N' to Return to the Menu" << endl;
 
@@ -256,7 +302,11 @@ string StrToLower(string str){
 	return lower;
 }
 
-bool ContainsCharacters(string data){
+bool DoesntContainCharacters(string data){
+	//To Prevent Errors When Working with Empty Strings
+	if(data.empty())
+		return false;
+
 	for (int i = 0; i < data.size(); i++){
 		if(isalpha(data[i]))
 			return false;

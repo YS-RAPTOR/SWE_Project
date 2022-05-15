@@ -4,6 +4,7 @@
 #include <vector>
 #include <filesystem>
 #include <cstdio>
+#include <string>
 
 #include "table.h"
 
@@ -58,6 +59,6 @@ public:
     void ReplaceVoter(Voter voterToReplace, Voter newVoter);
 
     //Special Functions for Voting and FInding Candidate with Most or Least amount of Votes.
-    bool Vote(Voter voter, unsigned long candidateID, string party);
+    bool Vote(Voter& voter, unsigned long candidateID, string party);
     vector<Candidate> CandidateVoteInfo(bool most);
 };

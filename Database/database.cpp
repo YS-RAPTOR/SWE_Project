@@ -140,7 +140,7 @@ void Database::ReplaceVoter(Voter voterToReplace, Voter newVoter){
     m_voterTable.open(VOTER_DATA_LOCATION);
 }
 
-bool Database::Vote(Voter voter, unsigned long candidateID, string party){
+bool Database::Vote(Voter& voter, unsigned long candidateID, string party){
     //Creates Query According the Conditions Given. Query is a lambda Expression.
     Candidate check;
     bool (*query)(Candidate candidate, Candidate check);

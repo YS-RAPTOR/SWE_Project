@@ -1,6 +1,8 @@
 #pragma once
 #define STRINGBITS 8
 #include <string>
+#include <iostream>
+#include <sstream>
 #include <bitset>
 
 using namespace std;
@@ -27,6 +29,9 @@ public:
 
     //Print Information about the Candidate
     void PrintInfo();
+
+    //Convert to String
+    string ToString();
 
     //Operators
     bool operator==(const Candidate& other);
@@ -76,6 +81,9 @@ public:
 
     //Print Information about the Voter
     void PrintInfo();
+
+    //Convert to String
+    string ToString();
 
     //Operators
     bool operator==(const Voter& other);
