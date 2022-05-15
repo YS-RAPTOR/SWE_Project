@@ -10,12 +10,10 @@
 
 using namespace std;
 
-Voter Login();
 void UI();
-char Menu();
-bool AreYouSure();
-bool IsCandidateID(string data);
-
-void voteprint();
-void cand_record(char cand);
-
+Voter Login();
+string Menu();
+bool ContainsCharacters(string data);
+void PrintCandidate(Voter voter);
+void Vote();
+bool AreYouSure(string prompt);

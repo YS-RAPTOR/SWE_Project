@@ -2,19 +2,26 @@
 
 
 void UI(){
-
 	Voter voter = Login();
-
 	bool running = true;
-
 	//Program Loop
 	while(running){
+		char menuChoice;
+		string Input = Menu();
 		
-		char menuChoice = Menu();
+		//Check if Input is Valid
+		if(Input.length() == 1){
+			menuChoice = tolower(Input[0]);
+		}else{
+			cout << "Unknown Selection, Please Try Again!" << endl;
+			system("pause");
+			continue;
+		}
 
+		//Logic To Check if Input is Expected
 		switch (tolower(menuChoice)) {
 		case 'p':
-			voteprint();
+			PrintCandidate(voter);
 			break;
 		case 'a':
 			
@@ -26,15 +33,14 @@ void UI(){
 			
 			break;
 		case 'q':
-			if(AreYouSure("quit")){
+			if(AreYouSure("Quit")){
 				running = false;
 			}
 			break;
 		// if the users have entered the wrong selected, display a message and return to main menu
 		default:
-			cout << "\n\tUnknown selection, please try again\n\n";
-			cin.clear();
-			cin.ignore();
+			cout << "Unknown Selection, Please Try Again!" << endl;
+			system("pause");
 			break;
 		}
 		
@@ -43,50 +49,76 @@ void UI(){
 
 Voter Login(){
 	while (true){
-		unsigned long ID;
-		char unsigned age;
+		system("CLS");
+		string data;
+
+		unsigned long ID = 0; 
+		char unsigned age = 0;
+		//TODO Quit Here
 		cout << "Please Enter Voter ID: ";
-		cin >> ID;
-		cout << "Please Enter Your Age: ";
-		cin >> age;
+		getline(cin, data);
+
+		//If You can Convert Input To ID Convert It Otherwise Continue
+		if(ContainsCharacters(data))
+			ID = stoul(data);
+		else{
+			cout << "Invalid Input, Please Try Again!" << endl;
+			system("pause");
+			continue;
+		}
 		
+
+		cout << "Please Enter Your Age: ";
+		getline(cin, data);
+		//If You can Convert Input To Age Convert It Otherwise Continue
+		if(ContainsCharacters(data))
+			age = (unsigned char)stoi(data);
+		else{
+			cout << "Invalid Input, Please Try Again!" << endl;
+			system("pause");
+			continue;
+		}
+
 		Voter check(ID, "", 0, "");
 
+		//Checks If Voter Exists in Database
 		auto results = Database::instance().VoterQuery([](Voter voter, Voter check)->bool{
 			return voter.VoterID() == check.VoterID();
 		}, check, true);
 
+		//Checks if the Voter Credentials Given Is Valid
 		if(results.empty() || results.size() > 1 || results[0].Age() != age){
-			cout << "Invalid Login";
-			cin.clear();
-			cin.ignore();
+			cout << "Invalid Login, Please Try Again!" << endl;
+			system("pause");
+			continue;
 		}else{
+			system("CLS");
 			return results[0];
 		}
 	}
 }
 
-char Menu(){
+string Menu(){
 
-	// menu is displayed 
+	//menu is displayed 
 	//asking the user to select an option from the menu
-	char menuchoice;
-	cout << " =====================================================\n";
-	cout << " \t\tMENU\n ";
-	cout << "=====================================================\n";
-	cout << " Enter P to print the record of (selected) candidate\n";
-	cout << " Enter A to add your vote\n";
-	cout << " Enter S to display the smallest number of votes\n";
-	cout << " Enter L to display the largest number of votes\n";
-	cout << " Enter Q to Quit\n";
-	cout << " ===================================================== \n";
-	cout << "\t\tEnter your choice:\t";
-	cin >> menuchoice;
 	system("CLS");
-	return menuchoice;
+	string Input;
+	cout << "=====================================================\n";
+	cout << "MENU\n";
+	cout << "=====================================================\n";
+	cout << "Enter P to Print Information About A Specific Candidate\n";
+	cout << "Enter A to Vote For a Specific Candidate\n";
+	cout << "Enter S to Display the Candidate with The Least Votes\n";
+	cout << "Enter L to Display the Candidate with The Most Votes\n";
+	cout << "Enter Q to Quit\n";
+	cout << "===================================================== \n";
+	cout << "Enter your choice: ";
+	getline(cin, Input);
+	return Input;
 }
 
-bool IsCandidateID(string data){
+bool ContainsCharacters(string data){
 	for (int i = 0; i < data.size(); i++){
 		if(isalpha(data[i]))
 			return false;
@@ -96,10 +128,10 @@ bool IsCandidateID(string data){
 
 void Vote(Voter voter){
 	string input;
-	cout << "Enter Candidate ID or the Party YOu wish to Vote for: ";
+	cout << "Enter Candidate ID or the Party You Wish to Vote for: ";
 	getline(cin, input);
 
-	if(IsCandidateID(input)){
+	if(ContainsCharacters(input)){
 		Database::instance().Vote(voter, stoul(input), "");
 	}else{	
 		Database::instance().Vote(voter, 0, input);
@@ -108,60 +140,80 @@ void Vote(Voter voter){
 
 }
 
-void voteprint(Voter voter)
 // if the user selected P they will be directed to this menu fo further selection
 // they are given the option to choose between candidate's ID or party name to select the candidate
 // once they have made a selection, they then will be redirected again
-{
-	string cand;
-	cout << "  =====================================================\n";
-	cout << " \t\t CANDIDATE\n ";
-	cout << " =====================================================\n";
-	cout << "  Enter Candidate's ID or the Party name:\n";
-	cout << "  ===================================================== \n";
-	cout << "\t\t:\t";
-	getline(cin,cand);
+void PrintCandidate(Voter voter){	
+	//Get User Input
 	system("CLS");
-	if (IsCandidateID(cand)) {
-		Candidate cand_new(stoul(cand), "", "", 0, "");
-		vector<Candidate> resultCandidate = Database::instance().CandidateQuery([](Candidate candidate, Candidate check)->bool {
-			return candidate.CandidateID() == check.CandidateID();
-			}, cand_new, true);
-		if (resultCandidate.empty() && resultCandidate.size() > 1)
-			cout << "invalid Candidate";
+	string input;
+	cout << "Enter Candidate's ID or the Party name: ";
+	getline(cin, input);
+
+	//Check If User Entered Candidate ID or Party Name
+	if (ContainsCharacters(input)) {
+		//Query Database
+		Candidate check(stoul(input), "", "", 0, "");
+		auto resultCandidate = Database::instance().CandidateQuery([](Candidate candidate, Candidate check)->bool {
+				return candidate.CandidateID() == check.CandidateID();
+			}, check, true);
+
+		//Check if Candidate is Valid
+		if (resultCandidate.empty() || resultCandidate.size() > 1)
+			cout << "Invalid Candidate ID!" << endl;
 		else
 			resultCandidate[0].PrintInfo();
 	}
 	else {
-		Candidate cand_new(0, "", cand, 0, voter.Suburb());
-			auto resultCandidate = Database::instance().CandidateQuery([](Candidate candidate, Candidate check)->bool {
+		//Query Database
+		Candidate check(0, input, "", 0, voter.Suburb());
+		auto resultCandidate = Database::instance().CandidateQuery([](Candidate candidate, Candidate check)->bool {
 			return candidate.Party() == check.Party() && check.Suburb() == candidate.Suburb();
-				}, cand_new, true);
-			if (resultCandidate.empty() && resultCandidate.size() > 1)
-				cout << "invalid Party name";
-			else
-				resultCandidate[0].PrintInfo();
+			}, check, true);
+
+		//Check if Candidate is Valid
+		if (resultCandidate.empty() || resultCandidate.size() > 1)
+			cout << "Invalid Party Name!" << endl;
+		else
+			resultCandidate[0].PrintInfo();
 	}
-
+	cout << endl;
+	system("pause");
+	system("CLS");
 }
-bool AreYouSure(string prompt){
-	
-	while (true){
-		char selected;
-		cout << "\n\n\t\tAre you sure you want to" << prompt <<"?\n\n" << endl;
-		cout << " \t==================================================\n";
-		cout << "\tpress 'Y' for" << prompt << "\tpress 'N' to return to menu\n";
-		cin >> selected;
-		selected = tolower(selected);
 
+bool AreYouSure(string prompt){
+	while (true){
+		system("CLS");
+		string data = "";
+		char selected;
+
+		//Print Options
+		cout << "Are You Sure You Want to " << prompt <<"?" << endl;
+		cout << "==================================================\n";
+		cout << "Press 'Y' To " << prompt << "\nOr\nPress 'N' to Return to the Menu" << endl;
+
+		//Get User Input
+		getline(cin, data);
+		
+		//Check If Data can be casted into a character
+		if(data.length() == 1){
+			selected = tolower(data[0]);
+		}else{
+			cout << "Unknown Selection, Please Try Again!" << endl;
+			system("pause");
+			continue;
+		}
+
+		//Check if Selection is Valid
 		if(selected == 'y'){
 			return true;
 		}else if(selected == 'n'){
 			return false;
 		}else{
-			cin.clear();
-			cin.ignore();
-			cout << "Unknown selection, please try again.";
+			cout << "Unknown Selection, Please Try Again!" << endl;
+			system("pause");
+			continue;
 		}
 	}
 }

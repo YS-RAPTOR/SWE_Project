@@ -11,7 +11,7 @@
 #define CANDIDATE_DATA_LOCATION "Data/Candidate.txt"
 #define VOTER_DATA_LOCATION "Data/Voter.txt"
 #define TEMP_DATA_LOCATION "Data/.temp.txt"
-#define TESTING true
+// #define TESTING
 
 using namespace std;
 
