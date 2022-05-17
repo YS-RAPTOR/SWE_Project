@@ -9,9 +9,19 @@ add_executable(${PROJECT_NAME}
     UI/UI.cpp
 )
 
-target_include_directories(${PROJECT_NAME} 
+target_include_directories(${PROJECT_NAME}
     PUBLIC Database/includes
     PUBLIC UI/includes
+)
+
+add_executable(MakeData
+    data.cpp
+    Database/database.cpp
+    Database/table.cpp
+)
+
+target_include_directories(MakeData
+    PUBLIC Database/includes
 )
 
 add_executable(Test

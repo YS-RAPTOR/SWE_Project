@@ -19,10 +19,6 @@ using namespace std;
 //Singleton Class
 class Database{
 private:
-    //Status of File Streams
-    bool m_voterTableStatus;
-    bool m_candidateTableStatus;
-
     //Reset file Streams
     void ResetCandidateTable(bool beginning);
     void ResetVoterTable(bool beginning);

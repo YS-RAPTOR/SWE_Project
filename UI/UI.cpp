@@ -28,9 +28,11 @@ void UI(){
 		//Logic To Check if Input is Expected
 		switch (tolower(menuChoice)) {
 		case 'p':
+			//Print Info About Candidate
 			PrintCandidate(voter);
 			break;
 		case 'a':
+			//Check if Voter has already voted
 			system("CLS");
 			if(!voter.Status()){
 				Vote(voter);
@@ -40,16 +42,20 @@ void UI(){
 			}
 			break;
 		case 's':
+			//Print Info About Candidate with Least Votes
 			system("CLS");
 			candidatesResults = Database::instance().CandidateVoteInfo(false);
+			//Check if No Votes Have been recorded
 			if (candidatesResults.empty()){
 				cout << "There are no Recorded Votes" << endl;
 			}
+			//Check if Only One Person has the Least Votes
 			else if (candidatesResults.size()==1){
 				cout << "The Candidate with the Least Votes is: " << endl;
 				cout << endl;
 				candidatesResults[0].PrintInfo();
 			}
+			//Check if More Than One Person has the Least Votes
 			else {
 				cout << "The Candidates with the Least Votes are: " << endl; 
 				for (size_t i = 0; i < candidatesResults.size(); i++){
@@ -60,16 +66,20 @@ void UI(){
 			system("pause");
 			break;
 		case 'l':
+			//Print Info About Candidate with Most Votes
 			system("CLS");
 			candidatesResults = Database::instance().CandidateVoteInfo(true);
+			//Check if No Votes Have been recorded
 			if (candidatesResults.empty()){
 				cout << "There are no Recorded Votes" << endl;
 			}
+			//Check if Only One Person has the Most Votes
 			else if (candidatesResults.size()==1){
 				cout << "The Candidate with the Most Votes is: " << endl;
 				cout << endl;
 				candidatesResults[0].PrintInfo();
 			}
+			//Check if More Than One Person has the Most Votes
 			else {
 				cout << "The Candidates with the Most Votes are: " << endl; 
 				for (size_t i = 0; i < candidatesResults.size(); i++){
@@ -80,11 +90,12 @@ void UI(){
 			system("pause");
 			break;
 		case 'q':
+			//Check if the User is 100% Sure the User Wants to Quit
 			if(AreYouSure("Quit", "")){
 				running = false;
 			}
 			break;
-		// if the users have entered the wrong selected, display a message and return to main menu
+		//If the Users have Entered the Wrong Selected, Display a Message and Return to Main Menu
 		default:
 			cout << "Unknown Selection, Please Try Again!" << endl;
 			system("pause");
@@ -109,7 +120,7 @@ Voter Login(){
 		if(data == "Q" || data == "q")
 			return Voter(0, "",0, "");
 		
-		//If You can Convert Input To ID Convert It Otherwise Continue
+		//If You can Convert Input To ID Convert It, Otherwise Continue
 		else if(DoesntContainCharacters(data))
 			ID = stoul(data);
 		else{
@@ -126,7 +137,7 @@ Voter Login(){
 		if(data == "Q" || data == "q")
 			return Voter(0, "",0, "");
 		
-		//If You can Convert Input To Age Convert It Otherwise Continue
+		//If You can Convert Input To Age Convert It, Otherwise Continue
 		if(DoesntContainCharacters(data))
 			age = (unsigned char)stoi(data);
 		else{
@@ -156,8 +167,8 @@ Voter Login(){
 
 string Menu(){
 
-	//menu is displayed 
-	//asking the user to select an option from the menu
+	//Menu is Displayed 
+	//Asking the User to Select an Option From the Menu
 	system("CLS");
 	string Input;
 	cout << "=====================================================\n";
@@ -180,6 +191,7 @@ void Vote(Voter& voter){
 	cout << "Enter Candidate ID or the Party You Wish to Vote for: ";
 	getline(cin, input);
 
+	//Check if User Entered Candidate ID or Party Name
 	if(DoesntContainCharacters(input)){
 		//Query Database
 		Candidate check(stoul(input), "", "", 0, "");
@@ -192,8 +204,9 @@ void Vote(Voter& voter){
 			cout << "Invalid Candidate ID!" << endl;
 			system("pause");
 		}else{
-			resultCandidate[0].PrintInfo();
+			//If Valid Make Sure the Person Wants to Vote for this Candidate.
 			if(AreYouSure("Vote For This Candidate", "\n" + resultCandidate[0].ToString())){
+				//Vote for Candidate
 				Database::instance().Vote(voter, stoul(input), "");
 			}
 		}
@@ -209,8 +222,10 @@ void Vote(Voter& voter){
 			cout << "Invalid Party Name!" << endl;
 			system("pause");
 		}else{
+			//If Valid Make Sure the Person Wants to Vote for this Candidate.
 			if(AreYouSure("Vote For This Candidate", "\n" + resultCandidate[0].ToString())){
-				Database::instance().Vote(voter, 0, input);
+				//Vote for Candidate
+				cout << Database::instance().Vote(voter, 0, input);
 			}
 		}
 	}
@@ -238,6 +253,7 @@ void PrintCandidate(Voter voter){
 		if (resultCandidate.empty() || resultCandidate.size() > 1)
 			cout << "Invalid Candidate ID!" << endl;
 		else
+			//Print Info about Candidate
 			resultCandidate[0].PrintInfo();
 	}
 	else {
@@ -251,6 +267,7 @@ void PrintCandidate(Voter voter){
 		if (resultCandidate.empty() || resultCandidate.size() > 1)
 			cout << "Invalid Party Name!" << endl;
 		else
+			//Print Info about Candidate
 			resultCandidate[0].PrintInfo();
 	}
 	system("pause");
@@ -293,6 +310,7 @@ bool AreYouSure(string prompt, string extra){
 	}
 }
 
+//Convert String to LowerCase
 string StrToLower(string str){
 	string lower;
 	for (int i = 0; i < str.size(); i++){
@@ -302,6 +320,7 @@ string StrToLower(string str){
 	return lower;
 }
 
+//Check if String Contains Characters
 bool DoesntContainCharacters(string data){
 	//To Prevent Errors When Working with Empty Strings
 	if(data.empty())

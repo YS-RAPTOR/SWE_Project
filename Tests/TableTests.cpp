@@ -83,7 +83,7 @@ void TestBinaryConversion(){
 void TestVote_Class(){
     cout << "Testing Voting\n";
     
-    //Test Candidate Equal Operator
+    //Test Candidate Voting Function
     unsigned long testCandidateID = 123456789;
     string testParty = "Test Party";
     string testCandidateName = "Test Name";
@@ -101,7 +101,7 @@ void TestVote_Class(){
     }
     cout << endl;
 
-    //Test Voter Equal Operator
+    //Test Voter Voting Function
     unsigned long testVoterID = 123456789;
     string testVoterName = "Test Name";
     unsigned char testVoterAge = 32;

@@ -57,6 +57,7 @@ string Candidate::ToBinary(){
     return candidateID_B.to_string() + "|" + party_B + "|" + name_B + "|" + age_B.to_string() + "|" + suburb_B + "|" + count_B.to_string() + '\n';
 }
 
+//Print Info
 void Candidate::PrintInfo(){
     cout << "Candidate ID: " << m_candidateID << endl;
     cout << "Party: " << m_party << endl;
@@ -66,6 +67,7 @@ void Candidate::PrintInfo(){
     cout << "Count: " << m_count << endl;
 }
 
+//Candidate to String
 string Candidate::ToString(){
     stringstream ss;
     ss << "Candidate ID: " << m_candidateID << endl;
@@ -150,6 +152,7 @@ string Voter::ToBinary(){
     
 }
 
+//Print Info
 void Voter::PrintInfo(){
     cout << "Voter ID: " << m_voterID << endl;
     cout << "Name: " << m_name << endl;
@@ -158,6 +161,7 @@ void Voter::PrintInfo(){
     cout << "Status: " << m_status << endl;
 }
 
+//Voter to String
 string Voter::ToString(){
     stringstream ss;
     ss << "Voter ID: " << m_voterID << endl;
@@ -187,6 +191,7 @@ void Voter::Vote(){
 
 /*Helper Functions*/
 
+//Converts String to Binary
 string StringToBinary(string str){
     string binary = "";
     
@@ -199,6 +204,7 @@ string StringToBinary(string str){
     return binary;
 }
 
+//Converts Binary to String
 string BinaryToString(string bin){
     string str;
     for (size_t i = 0; i < bin.length(); i += STRINGBITS){
@@ -208,10 +214,12 @@ string BinaryToString(string bin){
     return str;
 }
 
+//Converts Binary to Unsigned Long
 unsigned long BinaryToULong(string bin){
     return bitset<32>(bin).to_ulong();
 }
 
+//Converts Binary to Unsigned Char
 unsigned char BinaryToUChar(string bin){
     return (unsigned char)bitset<8>(bin).to_ulong();
 }
