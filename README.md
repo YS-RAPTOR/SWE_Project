@@ -9,4 +9,4 @@ Then if you want to try the main again delete the data folder and then just run 
 
 If using Visual Studio you should see an option called current document with a green run symbol. There will be a dropdown in this button. Click that and you will see SWE_Project.exe, MakeData.exe and Test.exe.
 
-I will also provide the executables in a different folder for testing.
+I will also provide the executables in a different folder for further testing.
